@@ -34,7 +34,7 @@ const splitRouteParams = (route) => {
 
 const handleRoute = ({ route, method, callback }) => {
     const [baseRoute, ...params] = splitRouteParams(route);
-    handlers[method][baseRoute] = {
+    handlers[method][baseRoute + params.length] = {
         params,
         callback
     }
@@ -75,20 +75,21 @@ const createServer = () => {
     const server = http.createServer((req, res) => {
         const [baseRoute, ...params] = splitRouteParams(req.url);
         const method = req.method.toLowerCase();
-        if (handlers[method][baseRoute]) {
+        const route = baseRoute + params.length
+        if (handlers[method][route]) {
             res.send = function (value) {
                 res.setHeader('Content-Type', 'application/json');
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 res.write(typeof value !== 'string' ? JSON.stringify(value) : value);
                 res.end();
             }
-            const routeParams = handlers[method][baseRoute].params || [];
-            const requestParams = params || []
+            const routeParams = handlers[method][route].params;
+            const requestParams = params;
             req.params = routeParams.reduce((params, param, idx) => {
                 params[param] = requestParams[idx];
                 return params
             }, {});
-            handlers[method][baseRoute].callback(req, res);
+            handlers[method][route].callback(req, res);
         } else {
             let fileUrl;
             if (req.url == '/') {
