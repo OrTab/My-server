@@ -73,23 +73,23 @@ const createServer = () => {
     }
 
     const server = http.createServer((req, res) => {
-        const [baseRoute, ...params] = splitRouteParams(req.url);
+        const [baseRoute, ...requestParams] = splitRouteParams(req.url);
         const method = req.method.toLowerCase();
-        const route = baseRoute + params.length
-        if (handlers[method][route]) {
+        const route = baseRoute + params.length;
+        const handler = handlers[method][route];
+        if (handler) {
             res.send = function (value) {
                 res.setHeader('Content-Type', 'application/json');
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 res.write(typeof value !== 'string' ? JSON.stringify(value) : value);
                 res.end();
             }
-            const routeParams = handlers[method][route].params;
-            const requestParams = params;
+            const routeParams = handler.params;
             req.params = routeParams.reduce((params, param, idx) => {
                 params[param] = requestParams[idx];
                 return params
             }, {});
-            handlers[method][route].callback(req, res);
+            handler.callback(req, res);
         } else {
             let fileUrl;
             if (req.url == '/') {
