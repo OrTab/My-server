@@ -75,7 +75,7 @@ const createServer = () => {
     const server = http.createServer((req, res) => {
         const [baseRoute, ...requestParams] = splitRouteParams(req.url);
         const method = req.method.toLowerCase();
-        const route = baseRoute + params.length;
+        const route = baseRoute + requestParams.length;
         const handler = handlers[method][route];
         if (handler) {
             res.send = function (value) {
