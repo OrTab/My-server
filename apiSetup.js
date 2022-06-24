@@ -99,7 +99,9 @@ const createServer = () => {
             }
             const stream = fs.createReadStream(path.join(`${__dirname}/public`, fileUrl));
             stream.on('error', function () {
-                res.writeHead(404);
+                res.writeHead(404, 'application/json');
+                //TODO - add support for 404 page or custom massage
+                res.write(JSON.stringify({ error: 'Couldn\'t find path' }))
                 res.end();
             });
             stream.pipe(res);
