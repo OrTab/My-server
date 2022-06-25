@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const { extendRequest } = require('./request');
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -59,6 +60,7 @@ const handleRoute = ({ route, method, callback }) => {
 }
 
 const createServer = () => {
+    extendRequest();
     const app = {
         get(route, callback) {
             handleRoute({

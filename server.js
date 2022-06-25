@@ -2,7 +2,6 @@
 const hostname = '127.0.0.1';
 const port = 5003;
 const { createServer } = require('./apiSetup.js')
-
 const { server, app } = createServer();
 
 app.get('/api/v2/profile/:profileId/photos/:photoId', (req, res) => {
@@ -43,42 +42,27 @@ app.post('/api/my-post', (req, res) => {
     })
 })
 
-app.post('/api/my-post/:id', (req, res) => {
+app.post('/api/my-post/:id', async (req, res) => {
     res.statusCode = 200;
-    let body = '';
-    req.on('data', (chunk) => {
-        body += chunk.toString();
+    const body = await req.getBody();
+    res.send({
+        msg: `This is the post with parser body and the id is ${req.params.id}`,
+        body
     })
-    req.on('end', () => {
-        body = JSON.parse(body);
-        res.send({
-            msg: `the post worked and the id is ${req.params.id}`,
-            body
-        })
-    })
-
 })
 
-app.put('/api/my-put/:id', (req, res) => {
+app.put('/api/my-put/:id', async (req, res) => {
     res.statusCode = 200;
-    let body = '';
-    req.on('data', (chunk) => {
-        body += chunk.toString();
+    const body = await req.getBody();
+    res.send({
+        msg: `the put worked and the id is ${req.params.id}`,
+        body
     })
-    req.on('end', () => {
-        body = JSON.parse(body);
-        res.send({
-            msg: `the put worked and the id is ${req.params.id}`,
-            body
-        })
-    })
-
 })
 
 
 app.delete('/api/my-delete', (req, res) => {
     res.statusCode = 200;
-    console.log(req.params);
     res.send({
         msg: `the delete worked and the id is ${req.params.id}`,
         body
