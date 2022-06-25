@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { extendRequest } = require('./request');
+const { extendResponse } = require('./response');
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -28,7 +29,7 @@ const handlers = {
     delete: {}
 }
 
-const handleRouteParams = (route) => {
+const getRouteDetails = (route) => {
     const params = [];
     const routesKeywords = [];
     for (let i = 0; i < route.length; i++) {
@@ -51,7 +52,7 @@ const handleRouteParams = (route) => {
 }
 
 const handleRoute = ({ route, method, callback }) => {
-    const { params, routesKeywords } = handleRouteParams(route);
+    const { params, routesKeywords } = getRouteDetails(route);
     handlers[method][route] = {
         params,
         callback,
@@ -61,6 +62,7 @@ const handleRoute = ({ route, method, callback }) => {
 
 const createServer = () => {
     extendRequest();
+    extendResponse();
     const app = {
         get(route, callback) {
             handleRoute({
@@ -94,7 +96,7 @@ const createServer = () => {
 
     const server = http.createServer((req, res) => {
         const method = req.method.toLowerCase();
-        const { routesKeywords: requestRoutesKeywords } = handleRouteParams(req.url);
+        const { routesKeywords: requestRoutesKeywords } = getRouteDetails(req.url);
         const currMethodHandlers = handlers[method];
         for (let path in currMethodHandlers) {
             const currHandler = currMethodHandlers[path];
@@ -109,12 +111,6 @@ const createServer = () => {
             }
             if (filteredRouteParams.length === currHandler.params.length &&
                 filteredRouteKeywords.length === currHandler.routesKeywords.length) {
-                res.send = function (value) {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.setHeader('Access-Control-Allow-Origin', '*');
-                    res.write(typeof value !== 'string' ? JSON.stringify(value) : value);
-                    res.end();
-                }
                 const routeParams = currMethodHandlers[path].params;
                 req.params = routeParams.reduce((params, param, idx) => {
                     params[param] = filteredRouteParams[idx];
@@ -124,7 +120,6 @@ const createServer = () => {
                 return;
             }
         }
-
         let fileUrl;
         if (req.url == '/') {
             fileUrl = 'index.html';

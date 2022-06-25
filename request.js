@@ -20,4 +20,6 @@ const extendRequest = () => {
     }
 }
 
-module.exports = { extendRequest }
+module.exports = {
+    extendRequest
+}
