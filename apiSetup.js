@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const PARAM_KEYWORD = '*p*';
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -22,17 +21,13 @@ const mimeTypes = {
 };
 
 const handlers = {
-    get: {
-
-    },
+    get: {},
     post: {},
     put: {},
     delete: {}
 }
 
 const handleRouteParams = (route) => {
-    let baseRoute = '';
-    const mapOfRoute = {}
     const params = [];
     const routesKeywords = [];
     for (let i = 0; i < route.length; i++) {
@@ -40,7 +35,6 @@ const handleRouteParams = (route) => {
             i += 2
             let idx = route.indexOf('/', i);
             idx = idx === -1 ? route.length : idx;
-            baseRoute += `/${PARAM_KEYWORD}`;
             const routeParam = route.substring(i, idx);
             params.push(routeParam);
             i = idx - 1;
@@ -48,22 +42,18 @@ const handleRouteParams = (route) => {
             let idx = route.indexOf('/', i + 1);
             idx = idx === -1 ? route.length : idx;
             const routePath = route.substring(i + 1, idx);
-            baseRoute += '/' + routePath;
             i = idx - 1;
-            mapOfRoute[routePath] = mapOfRoute[routePath] ? mapOfRoute[routePath] + 1 : 1;
             routesKeywords.push(routePath);
-
         }
     }
-    return { baseRoute, mapOfRoute, params, routesKeywords }
+    return { params, routesKeywords }
 }
 
 const handleRoute = ({ route, method, callback }) => {
-    const { baseRoute, mapOfRoute, params, routesKeywords } = handleRouteParams(route);
-    handlers[method][baseRoute] = {
+    const { params, routesKeywords } = handleRouteParams(route);
+    handlers[method][route] = {
         params,
         callback,
-        mapOfRoute,
         routesKeywords
     }
 }
@@ -102,21 +92,21 @@ const createServer = () => {
 
     const server = http.createServer((req, res) => {
         const method = req.method.toLowerCase();
-        const { mapOfRoute: requestMapRoute } = handleRouteParams(req.url);
+        const { routesKeywords: requestRoutesKeywords } = handleRouteParams(req.url);
         const currMethodHandlers = handlers[method];
         for (let path in currMethodHandlers) {
             const currHandler = currMethodHandlers[path];
             const filteredRouteParams = [];
-            const filteredRoutePaths = []
-            for (let currKey in requestMapRoute) {
-                if (currHandler.mapOfRoute[currKey]) {
-                    filteredRoutePaths.push(currKey)
+            const filteredRouteKeywords = [];
+            for (let keyword of requestRoutesKeywords) {
+                if (currHandler.routesKeywords.includes(keyword)) {
+                    filteredRouteKeywords.push(keyword)
                 } else {
-                    filteredRouteParams.push(currKey);
+                    filteredRouteParams.push(keyword);
                 }
             }
             if (filteredRouteParams.length === currHandler.params.length &&
-                currHandler.routesKeywords.length === filteredRoutePaths.length) {
+                filteredRouteKeywords.length === currHandler.routesKeywords.length) {
                 res.send = function (value) {
                     res.setHeader('Content-Type', 'application/json');
                     res.setHeader('Access-Control-Allow-Origin', '*');

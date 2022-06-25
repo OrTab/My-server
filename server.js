@@ -5,7 +5,8 @@ const { createServer } = require('./apiSetup.js')
 
 const { server, app } = createServer();
 
-app.get('/massage', (req, res) => {
+app.get('/api/v2/profile/:profileId/photos/:photoId', (req, res) => {
+    console.log(req.params);
     res.statusCode = 200;
     res.send({
         massage: 'massage from server'
@@ -41,7 +42,6 @@ app.post('/api/my-post', (req, res) => {
         msg: 'the post worked'
     })
 })
-
 
 app.post('/api/my-post/:id', (req, res) => {
     res.statusCode = 200;
