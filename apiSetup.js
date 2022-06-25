@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-
+const PARAM_KEYWORD = '*p*';
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -22,21 +22,49 @@ const mimeTypes = {
 };
 
 const handlers = {
-    get: {},
+    get: {
+
+    },
     post: {},
     put: {},
     delete: {}
 }
 
-const splitRouteParams = (route) => {
-    return route.split(/[/:/\s]/).filter(x => x !== '');
+const handleRouteParams = (route) => {
+    let baseRoute = '';
+    const mapOfRoute = {}
+    const params = [];
+    const routesKeywords = [];
+    for (let i = 0; i < route.length; i++) {
+        if (route.charAt(i) + route.charAt(i + 1) === '/:') {
+            i += 2
+            let idx = route.indexOf('/', i);
+            idx = idx === -1 ? route.length : idx;
+            baseRoute += `/${PARAM_KEYWORD}`;
+            const routeParam = route.substring(i, idx);
+            params.push(routeParam);
+            i = idx - 1;
+        } else if (route.charAt(i) === '/') {
+            let idx = route.indexOf('/', i + 1);
+            idx = idx === -1 ? route.length : idx;
+            const routePath = route.substring(i + 1, idx);
+            baseRoute += '/' + routePath;
+            i = idx - 1;
+            mapOfRoute[routePath] = mapOfRoute[routePath] ? mapOfRoute[routePath] + 1 : 1;
+            routesKeywords.push(routePath);
+
+        }
+    }
+    return { baseRoute, mapOfRoute, params, routesKeywords }
 }
 
 const handleRoute = ({ route, method, callback }) => {
-    const [baseRoute, ...params] = splitRouteParams(route);
-    handlers[method][baseRoute + params.length] = {
+    const { baseRoute, mapOfRoute, params, routesKeywords } = handleRouteParams(route);
+    handlers[method][baseRoute] = {
         params,
-        callback
+        callback,
+        mapOfRoute,
+        routesKeywords
     }
 }
 
@@ -73,39 +101,53 @@ const createServer = () => {
     }
 
     const server = http.createServer((req, res) => {
-        const [baseRoute, ...requestParams] = splitRouteParams(req.url);
         const method = req.method.toLowerCase();
-        const route = baseRoute + requestParams.length;
-        const handler = handlers[method][route];
-        if (handler) {
-            res.send = function (value) {
-                res.setHeader('Content-Type', 'application/json');
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.write(typeof value !== 'string' ? JSON.stringify(value) : value);
-                res.end();
+        const { mapOfRoute: requestMapRoute } = handleRouteParams(req.url);
+        const currMethodHandlers = handlers[method];
+        for (let path in currMethodHandlers) {
+            const currHandler = currMethodHandlers[path];
+            const filteredRouteParams = [];
+            const filteredRoutePaths = []
+            for (let currKey in requestMapRoute) {
+                if (currHandler.mapOfRoute[currKey]) {
+                    filteredRoutePaths.push(currKey)
+                } else {
+                    filteredRouteParams.push(currKey);
+                }
             }
-            const routeParams = handler.params;
-            req.params = routeParams.reduce((params, param, idx) => {
-                params[param] = requestParams[idx];
-                return params
-            }, {});
-            handler.callback(req, res);
-        } else {
-            let fileUrl;
-            if (req.url == '/') {
-                fileUrl = 'index.html';
-            } else {
-                fileUrl = req.url;
+            if (filteredRouteParams.length === currHandler.params.length &&
+                currHandler.routesKeywords.length === filteredRoutePaths.length) {
+                res.send = function (value) {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.setHeader('Access-Control-Allow-Origin', '*');
+                    res.write(typeof value !== 'string' ? JSON.stringify(value) : value);
+                    res.end();
+                }
+                const routeParams = currMethodHandlers[path].params;
+                req.params = routeParams.reduce((params, param, idx) => {
+                    params[param] = filteredRouteParams[idx];
+                    return params
+                }, {});
+                currMethodHandlers[path].callback(req, res)
+                return;
             }
-            const stream = fs.createReadStream(path.join(`${__dirname}/public`, fileUrl));
-            stream.on('error', function () {
-                res.writeHead(404, 'application/json');
-                //TODO - add support for 404 page or custom massage
-                res.write(JSON.stringify({ error: 'Couldn\'t find path' }))
-                res.end();
-            });
-            stream.pipe(res);
         }
+
+        let fileUrl;
+        if (req.url == '/') {
+            fileUrl = 'index.html';
+        } else {
+            fileUrl = req.url;
+        }
+        const stream = fs.createReadStream(path.join(`${__dirname}/public`, fileUrl));
+        stream.on('error', function () {
+            res.writeHead(404, 'application/json');
+            //TODO - add support for 404 page or custom massage
+            res.write(JSON.stringify({ error: 'Couldn\'t find path' }))
+            res.end();
+        });
+        stream.pipe(res);
+
     });
     return { server, app }
 }
