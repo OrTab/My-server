@@ -3,6 +3,7 @@ const path = require('path');
 const http = require('http');
 const { extendRequest } = require('./request');
 const { extendResponse } = require('./response');
+const { getRouteDetails, handleQueryParams } = require('./routeUtils');
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -27,28 +28,6 @@ const handlers = {
     post: {},
     put: {},
     delete: {}
-}
-
-const getRouteDetails = (route) => {
-    const params = [];
-    const routesKeywords = [];
-    for (let i = 0; i < route.length; i++) {
-        if (route.charAt(i) + route.charAt(i + 1) === '/:') {
-            i += 2
-            let idx = route.indexOf('/', i);
-            idx = idx === -1 ? route.length : idx;
-            const routeParam = route.substring(i, idx);
-            params.push(routeParam);
-            i = idx - 1;
-        } else if (route.charAt(i) === '/') {
-            let idx = route.indexOf('/', i + 1);
-            idx = idx === -1 ? route.length : idx;
-            const routePath = route.substring(i + 1, idx);
-            i = idx - 1;
-            routesKeywords.push(routePath);
-        }
-    }
-    return { params, routesKeywords }
 }
 
 const handleRoute = ({ route, method, callback }) => {
@@ -96,7 +75,15 @@ const createServer = () => {
 
     const server = http.createServer((req, res) => {
         const method = req.method.toLowerCase();
-        const { routesKeywords: requestRoutesKeywords } = getRouteDetails(req.url);
+        const indexOfQueryParamsStart = req.url.indexOf('?');
+        let requestUrl = req.url;
+        if (indexOfQueryParamsStart !== -1) {
+            requestUrl = req.url.substring(0, indexOfQueryParamsStart);
+            const queryParams = req.url.substring(indexOfQueryParamsStart + 1);
+            handleQueryParams(req, queryParams);
+        }
+
+        const { routesKeywords: requestRoutesKeywords } = getRouteDetails(requestUrl);
         const currMethodHandlers = handlers[method];
         for (let path in currMethodHandlers) {
             const currHandler = currMethodHandlers[path];
@@ -121,10 +108,10 @@ const createServer = () => {
             }
         }
         let fileUrl;
-        if (req.url == '/') {
+        if (requestUrl == '/') {
             fileUrl = 'index.html';
         } else {
-            fileUrl = req.url;
+            fileUrl = requestUrl;
         }
         const stream = fs.createReadStream(path.join(`${__dirname}/public`, fileUrl));
         stream.on('error', function () {

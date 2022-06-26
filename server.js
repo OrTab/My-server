@@ -21,6 +21,7 @@ app.get('/massage/:id', (req, res) => {
 })
 
 app.get('/massage/:id/yes/:someString', (req, res) => {
+    console.log(req.query);
     const { id, someString } = req.params;
     res.statusCode = 200;
     res.send({
