@@ -75,14 +75,8 @@ const createServer = () => {
 
     const server = http.createServer((req, res) => {
         const method = req.method.toLowerCase();
-        const indexOfQueryParamsStart = req.url.indexOf('?');
-        let requestUrl = req.url;
-        if (indexOfQueryParamsStart !== -1) {
-            requestUrl = req.url.substring(0, indexOfQueryParamsStart);
-            const queryParams = req.url.substring(indexOfQueryParamsStart + 1);
-            handleQueryParams(req, queryParams);
-        }
-
+        const [requestUrl, queryParams] = req.url.split('?');
+        req.queryString = queryParams || '';
         const { routesKeywords: requestRoutesKeywords } = getRouteDetails(requestUrl);
         const currMethodHandlers = handlers[method];
         for (let path in currMethodHandlers) {
@@ -91,7 +85,7 @@ const createServer = () => {
             const filteredRouteKeywords = [];
             for (let keyword of requestRoutesKeywords) {
                 if (currHandler.routesKeywords.includes(keyword)) {
-                    filteredRouteKeywords.push(keyword)
+                    filteredRouteKeywords.push(keyword);
                 } else {
                     filteredRouteParams.push(keyword);
                 }

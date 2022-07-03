@@ -1,12 +1,17 @@
 class Router {
-    methods = {}
+    routes = {
+
+    }
     constructor() {
 
     }
 
-    forRoute(path, callback) {
-
+    forRoute(baseRoute, routeHandlers) {
+        this.routes[baseRoute] = routeHandlers
     }
 
-
 }
+
+
+
+module.exports = Router 

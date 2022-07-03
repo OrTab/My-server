@@ -22,12 +22,13 @@ const getRouteDetails = (route) => {
     return { params, routesKeywords }
 }
 
-const handleQueryParams = (req, url) => {
-
-    const formattedUrl = new URLSearchParams(url);
+const handleQueryParams = (req, queryParams) => {
     const query = {};
-    for (const [key, value] of formattedUrl.entries()) {
-        query[key] = value;
+    if (!!queryParams) {
+        const formattedUrl = new URLSearchParams(queryParams);
+        for (const [key, value] of formattedUrl.entries()) {
+            query[key] = value;
+        }
     }
     req.query = query;
 }
