@@ -1,4 +1,4 @@
-let route = require('../route');
+let route = require('../routing/route');
 route = new route()
 
 

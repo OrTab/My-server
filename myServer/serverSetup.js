@@ -1,27 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const { extendRequest } = require('./request');
-const { extendResponse } = require('./response');
-const { getRouteDetails, handleQueryParams } = require('./routeUtils');
-
-const mimeTypes = {
-    '.html': 'text/html',
-    '.js': 'text/javascript',
-    '.css': 'text/css',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.wav': 'audio/wav',
-    '.mp4': 'video/mp4',
-    '.woff': 'application/font-woff',
-    '.ttf': 'application/font-ttf',
-    '.eot': 'application/vnd.ms-fontobject',
-    '.otf': 'application/font-otf',
-    '.wasm': 'application/wasm'
-};
+const { extendRequest } = require('../request');
+const { extendResponse } = require('../response');
+const { getRouteDetails } = require('../routing/routeUtils');
 
 const handlers = {
     get: {},
@@ -107,7 +89,7 @@ const createServer = () => {
         } else {
             fileUrl = requestUrl;
         }
-        const stream = fs.createReadStream(path.join(`${__dirname}/public`, fileUrl));
+        const stream = fs.createReadStream(path.join(`${__dirname}/static-files`, fileUrl));
         stream.on('error', function () {
             res.writeHead(404, 'application/json');
             //TODO - add support for 404 page or custom massage

@@ -1,11 +1,8 @@
 
 const hostname = '127.0.0.1';
-const port = 5003;
-const { createServer } = require('./apiSetup.js')
+const port = 5000;
+const { createServer } = require('./myServer/serverSetup.js')
 const { server, app } = createServer();
-let router = require('./router');
-router = new router()
-const routeTest = require('./api/routeTest');
 
 
 app.get('/api/v2/profile/:profileId/photos/:photoId', (req, res) => {
@@ -63,8 +60,6 @@ app.put('/api/my-put/:id', async (req, res) => {
         body
     })
 })
-
-router.forRoute('/api/testing', routeTest)
 
 app.delete('/api/my-delete', (req, res) => {
     res.statusCode = 200;
