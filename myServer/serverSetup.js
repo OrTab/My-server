@@ -1,9 +1,10 @@
-const fs = require('fs');
-const path = require('path');
 const http = require('http');
+const path = require('path');
 const { extendRequest } = require('../request');
 const { extendResponse } = require('../response');
 const { getRouteDetails } = require('../routing/routeUtils');
+const { MIME_TYPES } = require('./constants');
+const { handleRequest, serveStaticFiles } = require('./utils');
 
 const handlers = {
     get: {},
@@ -58,46 +59,25 @@ const createServer = () => {
     const server = http.createServer((req, res) => {
         const method = req.method.toLowerCase();
         const [requestUrl, queryParams] = req.url.split('?');
-        req.queryString = queryParams || '';
-        const { routesKeywords: requestRoutesKeywords } = getRouteDetails(requestUrl);
-        const currMethodHandlers = handlers[method];
-        for (let path in currMethodHandlers) {
-            const currHandler = currMethodHandlers[path];
-            const filteredRouteParams = [];
-            const filteredRouteKeywords = [];
-            for (let keyword of requestRoutesKeywords) {
-                if (currHandler.routesKeywords.includes(keyword)) {
-                    filteredRouteKeywords.push(keyword);
-                } else {
-                    filteredRouteParams.push(keyword);
-                }
-            }
-            if (filteredRouteParams.length === currHandler.params.length &&
-                filteredRouteKeywords.length === currHandler.routesKeywords.length) {
-                const routeParams = currMethodHandlers[path].params;
-                req.params = routeParams.reduce((params, param, idx) => {
-                    params[param] = filteredRouteParams[idx];
-                    return params
-                }, {});
-                currMethodHandlers[path].callback(req, res)
-                return;
-            }
-        }
-        let fileUrl;
-        if (requestUrl == '/') {
-            fileUrl = 'index.html';
+        let extension;
+        if (requestUrl === '/') {
+            extension = '.html';
         } else {
-            fileUrl = requestUrl;
+            extension = path.extname(requestUrl);
         }
-        const stream = fs.createReadStream(path.join(`${__dirname}/static-files`, fileUrl));
-        stream.on('error', function () {
-            res.writeHead(404, 'application/json');
-            //TODO - add support for 404 page or custom massage
-            res.write(JSON.stringify({ error: 'Couldn\'t find path' }))
-            res.end();
-        });
-        stream.pipe(res);
-
+        req.queryString = queryParams || '';
+        if (MIME_TYPES[extension]) {
+            const filePath = extension === '.html' && requestUrl === '/' ? 'index.html' : requestUrl;
+            serveStaticFiles({ res, filePath, contentType: MIME_TYPES[extension] });
+            return;
+        }
+        const { routesKeywords: requestRoutesKeywords } = getRouteDetails(requestUrl);
+        const { callback, params } = handleRequest({ currentMethodHandlers: handlers[method], requestRoutesKeywords }) || {};
+        if (callback) {
+            req.params = params;
+            callback(req, res);
+            return;
+        }
     });
     return { server, app }
 }

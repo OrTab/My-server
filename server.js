@@ -5,6 +5,13 @@ const { createServer } = require('./myServer/serverSetup.js')
 const { server, app } = createServer();
 
 
+app.get('/api/v2', (req, res) => {
+    res.statusCode = 200;
+    res.send({
+        massage: `massage from server`
+    });
+})
+
 app.get('/api/v2/profile/:profileId/photos/:photoId', (req, res) => {
     const { profileId, photoId } = req.params;
     res.statusCode = 200;

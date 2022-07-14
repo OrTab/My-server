@@ -1,4 +1,4 @@
-const mimeTypes = {
+const MIME_TYPES = {
     '.html': 'text/html',
     '.js': 'text/javascript',
     '.css': 'text/css',
@@ -15,3 +15,7 @@ const mimeTypes = {
     '.otf': 'application/font-otf',
     '.wasm': 'application/wasm'
 };
+
+module.exports = {
+    MIME_TYPES
+}
