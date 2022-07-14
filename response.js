@@ -6,6 +6,10 @@ const extendResponse = () => {
         this.write(typeof value !== 'string' ? JSON.stringify(value) : value);
         this.end();
     }
+    ServerResponse.prototype.status = function (statusCode) {
+        this.statusCode = statusCode;
+        return this;
+    }
 }
 
 module.exports = {
