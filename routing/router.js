@@ -1,17 +1,10 @@
 class Router {
-    routes = {
+	routes = {};
+	constructor() {}
 
-    }
-    constructor() {
-
-    }
-
-    forRoute(baseRoute, routeHandlers) {
-        this.routes[baseRoute] = routeHandlers
-    }
-
+	forRoute(baseRoute, routeHandlers) {
+		this.routes[baseRoute] = routeHandlers;
+	}
 }
 
-
-
-module.exports = Router 
+module.exports = Router;
