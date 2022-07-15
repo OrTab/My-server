@@ -15,7 +15,9 @@ const MIME_TYPES = {
 	'.otf': 'application/font-otf',
 	'.wasm': 'application/wasm',
 };
+const METHODS = ['get', 'post', 'put', 'delete'];
 
 module.exports = {
 	MIME_TYPES,
+	METHODS,
 };

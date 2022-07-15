@@ -3,6 +3,8 @@ const port = 5000;
 const { createServer } = require('./myServer/serverSetup.js');
 const { server, app } = createServer();
 
+app.setStaticFolder('static-files');
+
 app.get('/api/v2', (req, res) => {
 	res.send({
 		massage: `massage from server`,

@@ -3,58 +3,13 @@ const path = require('path');
 const { extendRequest } = require('../request');
 const { extendResponse } = require('../response');
 const { getRouteDetails } = require('../routing/routeUtils');
+const { app } = require('./app');
 const { MIME_TYPES } = require('./constants');
-const { handleRequest, serveStaticFiles } = require('./utils');
-
-const handlers = {
-	get: {},
-	post: {},
-	put: {},
-	delete: {},
-};
-
-const handleRoute = ({ route, method, callback }) => {
-	const { params, routesKeywords } = getRouteDetails(route);
-	handlers[method][route] = {
-		params,
-		callback,
-		routesKeywords,
-	};
-};
+const { handleRequest, serveStaticFiles } = require('./requestUtils');
 
 const createServer = () => {
 	extendRequest();
 	extendResponse();
-	const app = {
-		get(route, callback) {
-			handleRoute({
-				route,
-				method: 'get',
-				callback,
-			});
-		},
-		post(route, callback) {
-			handleRoute({
-				route,
-				method: 'post',
-				callback,
-			});
-		},
-		put(route, callback) {
-			handleRoute({
-				route,
-				method: 'put',
-				callback,
-			});
-		},
-		delete(route, callback) {
-			handleRoute({
-				route,
-				method: 'delete',
-				callback,
-			});
-		},
-	};
 
 	const server = http.createServer((req, res) => {
 		const [requestUrl, queryParams] = req.url.split('?');
@@ -81,7 +36,7 @@ const createServer = () => {
 			getRouteDetails(requestUrl);
 		const { callback, params } =
 			handleRequest({
-				currentMethodHandlers: handlers[req.method.toLowerCase()],
+				currentMethodHandlers: app.handlers[req.method.toLowerCase()],
 				requestRoutesKeywords,
 			}) || {};
 		if (callback) {
@@ -89,6 +44,7 @@ const createServer = () => {
 			callback(req, res);
 			return;
 		}
+		res.send({ msg: 'no api route match' });
 	});
 	return { server, app };
 };
