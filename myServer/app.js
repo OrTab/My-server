@@ -3,6 +3,7 @@ const { METHODS } = require('./constants');
 class App {
 	handlers = {};
 	staticFolder = 'public';
+	authorizedOrigins = [];
 	constructor() {
 		METHODS.forEach((method) => {
 			this.handlers[method] = {};
@@ -19,6 +20,10 @@ class App {
 
 	setStaticFolder(folderName) {
 		this.staticFolder = folderName;
+	}
+
+	enableCorsForOrigins(origins) {
+		this.authorizedOrigins = origins;
 	}
 }
 

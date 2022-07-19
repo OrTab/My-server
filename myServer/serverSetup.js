@@ -12,6 +12,13 @@ const createServer = () => {
 	extendResponse();
 
 	const server = http.createServer((req, res) => {
+		console.log(req.headers.origin);
+		if (
+			req.headers.origin &&
+			app.authorizedOrigins.includes(req.headers.origin)
+		) {
+			res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+		}
 		const [requestUrl, queryParams] = req.url.split('?');
 		let extension;
 		if (requestUrl === '/') {
