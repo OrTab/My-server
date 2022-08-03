@@ -1,0 +1,20 @@
+{
+  "name": "my-server",
+  "version": "1.0.0",
+  "description": "node.js framework with no dependencies",
+  "main": "/myServer/serverSetup.js",
+  "scripts": {
+    "test": "exit 0",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OrTab/my-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OrTab/my-server/issues"
+  },
+  "homepage": "https://github.com/OrTab/my-server#readme"
+}
