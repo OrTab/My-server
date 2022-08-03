@@ -1,4 +1,4 @@
-const { getRouteDetails } = require('../routing/routeUtils');
+const { getRouteDetails } = require('./routing/routeUtils');
 const { METHODS } = require('./constants');
 class App {
 	handlers = {};
