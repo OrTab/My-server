@@ -1,5 +1,5 @@
 {
-  "name": "my-server",
+  "name": "@OrTab/my-server",
   "version": "1.0.0",
   "description": "node.js framework with no dependencies",
   "main": "/myServer/serverSetup.js",
