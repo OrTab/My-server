@@ -5,9 +5,10 @@ const { server, app } = createServer();
 
 app.setStaticFolder('static');
 
-app.get('/api/v2', (req, res) => {
+app.get('/api/v2/:id', (req, res) => {
+	console.log(req.userAgent);
 	res.send({
-		massage: `massage from server`,
+		massage: `massage from server and id -  ${req.params.id}`,
 	});
 });
 

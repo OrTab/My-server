@@ -12,12 +12,19 @@ const createServer = () => {
 	extendResponse();
 
 	const server = http.createServer((req, res) => {
-		console.log(req.headers.origin);
-		if (
-			req.headers.origin &&
-			app.authorizedOrigins.includes(req.headers.origin)
-		) {
-			res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+		if (req.headers.origin) {
+			if (app.authorizedOrigins.includes(req.headers.origin)) {
+				res.setHeader(
+					'Access-Control-Allow-Origin',
+					req.headers.origin
+				);
+			} else {
+				return res
+					.status(401)
+					.send(
+						`Access to fetch at ${req.url} from origin ${req.headers.origin} has been blocked by CORS policy: No Access-Control-Allow-Origin header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`
+					);
+			}
 		}
 		const [requestUrl, queryParams] = req.url.split('?');
 		let extension;
@@ -51,7 +58,7 @@ const createServer = () => {
 			callback(req, res);
 			return;
 		}
-		res.send({ msg: 'no api route match' });
+		return res.send({ msg: 'no api route match' });
 	});
 	return { server, app };
 };
