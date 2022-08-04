@@ -1,17 +1,23 @@
 const { URLSearchParams } = require('url');
 
 const getRouteDetails = (route) => {
+	const initialObj = { routesKeywords: [], params: [] }
+	if (route === '/') {
+		return initialObj
+	}
 	return route
 		.substring(1)
 		.split('/')
 		.reduce(
 			(routeMap, keyword) => {
-				if (keyword.charAt(0) === ':')
+				if (keyword.charAt(0) === ':') {
 					routeMap.params.push(keyword.substring(1));
-				else routeMap.routesKeywords.push(keyword);
+				}
+				else {
+					routeMap.routesKeywords.push(keyword);
+				}
 				return routeMap;
-			},
-			{ routesKeywords: [], params: [] }
+			}, initialObj
 		);
 };
 

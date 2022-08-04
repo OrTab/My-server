@@ -5,7 +5,7 @@ const { extendResponse } = require('../response/response');
 const { getRouteDetails } = require('../routing/routeUtils');
 const { app } = require('./app');
 const { MIME_TYPES } = require('./constants');
-const { handleRequest, serveStaticFiles } = require('../request/requestUtils');
+const { handleRequest, serveStaticFiles, checkIfFileExist } = require('../request/requestUtils');
 
 extendRequest();
 extendResponse();
@@ -38,12 +38,15 @@ const server = http.createServer((req, res) => {
 			extension === '.html' && requestUrl === '/'
 				? 'index.html'
 				: requestUrl;
-		serveStaticFiles({
-			res,
-			filePath,
-			contentType: MIME_TYPES[extension],
-		});
-		return;
+		const isFileExist = checkIfFileExist(filePath);
+		if (isFileExist) {
+			serveStaticFiles({
+				res,
+				filePath,
+				contentType: MIME_TYPES[extension],
+			});
+			return;
+		}
 	}
 	const { routesKeywords: requestRoutesKeywords } =
 		getRouteDetails(requestUrl);

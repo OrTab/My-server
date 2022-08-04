@@ -32,6 +32,12 @@ const handleRequest = ({ requestRoutesKeywords, currentMethodHandlers }) => {
 const getStaticFilePath = (filePath) =>
 	path.join(`${process.cwd()}/${app.staticFolder}`, filePath);
 
+
+const checkIfFileExist = (filePath) => {
+	const path = getStaticFilePath(filePath);
+	return fs.existsSync(path);
+}
+
 const serveStaticFiles = ({ res, filePath, contentType }) => {
 	res.setHeader('Content-Type', contentType);
 	const stream = fs.createReadStream(getStaticFilePath(filePath));
@@ -39,7 +45,7 @@ const serveStaticFiles = ({ res, filePath, contentType }) => {
 		res.statusCode = 404;
 		const pageNotFoundPath = getStaticFilePath('404.html');
 		try {
-			if (fs.existsSync(pageNotFoundPath)) {
+			if (checkIfFileExist('404.html')) {
 				const stream = fs.createReadStream(pageNotFoundPath);
 				stream.pipe(res);
 			} else {
@@ -57,4 +63,5 @@ const serveStaticFiles = ({ res, filePath, contentType }) => {
 module.exports = {
 	handleRequest,
 	serveStaticFiles,
+	checkIfFileExist
 };
