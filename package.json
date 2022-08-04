@@ -1,11 +1,11 @@
 {
   "name": "@or-tab/my-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "node.js framework with no dependencies",
-  "main": "serverSetup.js",
+  "main": "./setup/serverSetup.js",
   "scripts": {
     "test": "exit 0",
-    "start": "node server.js"
+    "start": ""
   },
   "repository": {
     "type": "git",

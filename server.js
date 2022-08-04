@@ -1,7 +1,7 @@
 const hostname = '127.0.0.1';
 const port = 5000;
-const { createServer } = require('./serverSetup.js');
-const { server, app } = createServer();
+const { app, server } = require('./setup/serverSetup')
+
 
 app.setStaticFolder('static');
 

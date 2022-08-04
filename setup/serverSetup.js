@@ -1,11 +1,11 @@
 const http = require('http');
 const path = require('path');
-const { extendRequest } = require('./request');
-const { extendResponse } = require('./response');
-const { getRouteDetails } = require('./routing/routeUtils');
+const { extendRequest } = require('../request/request');
+const { extendResponse } = require('../response/response');
+const { getRouteDetails } = require('../routing/routeUtils');
 const { app } = require('./app');
 const { MIME_TYPES } = require('./constants');
-const { handleRequest, serveStaticFiles } = require('./requestUtils');
+const { handleRequest, serveStaticFiles } = require('../request/requestUtils');
 
 extendRequest();
 extendResponse();

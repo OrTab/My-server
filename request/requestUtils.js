@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { app } = require('./app');
+const { app } = require('../setup/app');
 
 const handleRequest = ({ requestRoutesKeywords, currentMethodHandlers }) => {
 	for (let path in currentMethodHandlers) {
