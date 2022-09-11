@@ -1,4 +1,4 @@
-class Router {
+export class Router {
 	routes = {};
 	constructor() {}
 
@@ -6,5 +6,3 @@ class Router {
 		this.routes[baseRoute] = routeHandlers;
 	}
 }
-
-module.exports = Router;

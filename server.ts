@@ -1,14 +1,12 @@
 const hostname = '127.0.0.1';
 const port = 5000;
-const { app, server } = require('./setup/serverSetup')
-
-
+import { noDep } from './setup/serverSetup';
+const { app, server } = noDep();
 app.setStaticFolder('static');
 
 app.get('/api/v2/:id', (req, res) => {
-	console.log(req.userAgent);
 	res.send({
-		massage: `massage from server and id -  ${req.params.id}`,
+		massage: `massage from server and id -  ${req.params['id']}`,
 	});
 });
 
@@ -46,25 +44,24 @@ app.post('/api/my-post', (req, res) => {
 });
 
 app.post('/api/my-post/:id', async (req, res) => {
-	const body = await req.getBody();
+	const body = await req.body;
 	res.send({
-		msg: `This is the post with parser body and the id is ${req.params.id}`,
+		msg: `This is the post with parser body and the id is ${req.params['id']}`,
 		body,
 	});
 });
 
 app.put('/api/my-put/:id', async (req, res) => {
-	const body = await req.getBody();
+	const body = await req.body;
 	res.send({
-		msg: `the put worked and the id is ${req.params.id}`,
+		msg: `the put worked and the id is ${req.params['id']}`,
 		body,
 	});
 });
 
 app.delete('/api/my-delete', (req, res) => {
 	res.send({
-		msg: `the delete worked and the id is ${req.params.id}`,
-		body,
+		msg: `the delete worked and the id is ${req.params['id']}`,
 	});
 });
 

@@ -1,22 +1,27 @@
-const http = require('http');
-const path = require('path');
-const { extendRequest } = require('../request/request');
-const { extendResponse } = require('../response/response');
-const { getRouteDetails } = require('../routing/routeUtils');
-const { app } = require('./app');
-const { MIME_TYPES } = require('./constants');
-const { handleRequest, serveStaticFiles, checkIfFileExist } = require('../request/requestUtils');
+import http, { RequestListener } from 'http';
+import path from 'path';
+import { extendRequest } from '../request/request';
+import { extendResponse } from '../response/response';
+import { getRouteDetails } from '../routing/routeUtils';
+import { app } from './app';
+import { MIME_TYPES } from './constants';
+import {
+	handleRequest,
+	serveStaticFiles,
+	checkIfFileExist,
+} from '../request/requestUtils';
+import { ICustomIncomingMessage, ICustomServerResponse } from '../types/types';
 
 extendRequest();
 extendResponse();
 
-const server = http.createServer((req, res) => {
+const requestHandler = (
+	req: ICustomIncomingMessage,
+	res: ICustomServerResponse
+) => {
 	if (req.headers.origin) {
 		if (app.authorizedOrigins.includes(req.headers.origin)) {
-			res.setHeader(
-				'Access-Control-Allow-Origin',
-				req.headers.origin
-			);
+			res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
 		} else {
 			return res
 				.status(401)
@@ -25,19 +30,20 @@ const server = http.createServer((req, res) => {
 				);
 		}
 	}
-	const [requestUrl, queryParams] = req.url.split('?');
+	const [requestUrl = '', queryParams = ''] = (req.url as string).split('?');
 	let extension;
 	if (requestUrl === '/') {
 		extension = '.html';
 	} else {
-		extension = path.extname(requestUrl);
+		extension = path.extname(requestUrl as string);
 	}
-	req.queryString = queryParams || '';
+	req.queryString = queryParams;
 	if (MIME_TYPES[extension]) {
-		const filePath =
+		const filePath = (
 			extension === '.html' && requestUrl === '/'
 				? 'index.html'
-				: requestUrl;
+				: requestUrl
+		) as string;
 		const isFileExist = checkIfFileExist(filePath);
 		if (isFileExist) {
 			serveStaticFiles({
@@ -48,11 +54,13 @@ const server = http.createServer((req, res) => {
 			return;
 		}
 	}
+
 	const { routesKeywords: requestRoutesKeywords } =
 		getRouteDetails(requestUrl);
-	const { callback, params } =
+	const { callback, params = {} } =
 		handleRequest({
-			currentMethodHandlers: app.handlers[req.method.toLowerCase()],
+			currentMethodHandlers:
+				app.handlers[(req.method as string).toLowerCase()],
 			requestRoutesKeywords,
 		}) || {};
 	if (callback) {
@@ -61,9 +69,10 @@ const server = http.createServer((req, res) => {
 		return;
 	}
 	return res.send({ msg: 'no api route match' });
-});
+};
 
-module.exports = {
-	app,
-	server
+const server = http.createServer(requestHandler as RequestListener);
+
+export const noDep = () => {
+	return { app, server };
 };

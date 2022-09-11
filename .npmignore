@@ -1,5 +1,7 @@
 static*
 apiTest*
-server.js
+server.ts
 prettier.config.js
 .github*
+node_modules
+nodemon.json
