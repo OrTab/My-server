@@ -5,3 +5,4 @@ prettier.config.js
 .github*
 node_modules
 nodemon.json
+tsconfig.json    

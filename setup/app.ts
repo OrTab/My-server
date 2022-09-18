@@ -1,5 +1,5 @@
 import { getRouteDetails } from '../routing/routeUtils';
-import { THandlers, TMethods, TRequestHandler } from '../types/types';
+import { THandlers, TMethods } from '../types/types';
 
 class App {
 	private _handlers: Partial<THandlers> = {};
@@ -15,7 +15,8 @@ class App {
 	}
 
 	private getInitializeRequestMethod(method: TMethods) {
-		return (route: string, callback: TRequestHandler) => {
+		return (...something) => {
+			const [route, callback] = something;
 			const { params, routesKeywords } = getRouteDetails(route);
 			this._handlers[method] = this._handlers[method] ?? {};
 			const currentMethodHandler = this._handlers[method];

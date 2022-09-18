@@ -1,8 +1,8 @@
 {
   "name": "@or-tab/my-server",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "node.js framework with no dependencies",
-  "main": "./setup/serverSetup.js",
+  "main": "./setup/serverSetup.ts",
   "scripts": {
     "test": "exit 0",
     "start": ""
