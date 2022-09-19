@@ -4,18 +4,19 @@ const typesFolderPath = `${__dirname}/lib/types`
 const IMPORT = 'import'
 const EXPORT = 'export {}'
 let finalContentFile = ''
-const getFilteredFileContent = (fileContent, startIdx, endIdx) => {
+
+const getRelevantFileContent = (fileContent, startIdx, endIdx) => {
     const fileContentBeforeImport = fileContent.substring(0, startIdx);
     const fileContentAfterImport = fileContent.substring(endIdx)
     return fileContentBeforeImport + fileContentAfterImport
 
 }
 
-const handleSomething = (fileContent, target) => {
+const filterFileContent = (fileContent, target) => {
     for (let i = 0; i < fileContent.length; i++) {
         if (fileContent[i] === target.charAt(0) && fileContent.substring(i, i + target.length) === target) {
             const endIdx = fileContent.indexOf(';', i) + 1
-            fileContent = getFilteredFileContent(fileContent, i, endIdx)
+            fileContent = getRelevantFileContent(fileContent, i, endIdx)
         }
     }
     return fileContent
@@ -25,11 +26,11 @@ const handleFile = (path) => {
     let fileContent = fs.readFileSync(path, 'utf-8')
     let importIdx = fileContent.indexOf(IMPORT)
     if (importIdx > -1) {
-        fileContent = handleSomething(fileContent, IMPORT)
+        fileContent = filterFileContent(fileContent, IMPORT)
     }
     const emptyExportIdx = fileContent.indexOf(EXPORT)
     if (emptyExportIdx > -1) {
-        fileContent = handleSomething(fileContent, EXPORT)
+        fileContent = filterFileContent(fileContent, EXPORT)
     }
     finalContentFile += fileContent
 }
