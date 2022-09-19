@@ -1,24 +1,21 @@
 import http, { ServerResponse, IncomingMessage, RequestListener } from 'http';
 
-interface ICustomServerResponse extends ServerResponse {
+interface Response extends ServerResponse {
 	send: (data: {}) => void;
-	status: (status: number) => ICustomServerResponse;
+	status: (status: number) => Response;
 }
 
-interface ICustomIncomingMessage extends IncomingMessage {
+interface Request extends IncomingMessage {
 	isMobile: boolean;
 	queryString: string;
 	params: { [key: string]: string };
-	query: {};
+	query: { [key: string]: string };
 	userAgent: string;
-	send: (data: {}) => void;
+	send: (data: any) => void;
 	body: Promise<unknown>;
 }
 
-type TRequestHandler = (
-	request: ICustomIncomingMessage,
-	response: ICustomServerResponse
-) => void;
+type TRequestHandler = (request: Request, response: Response) => void;
 
 type TRequestDescription = {
 	params: string[];

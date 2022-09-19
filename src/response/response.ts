@@ -1,5 +1,5 @@
 import { ServerResponse } from 'http';
-import { ICustomServerResponse } from '../types/types';
+import { Response } from '../types/types';
 
 export const extendResponse = () => {
 	Object.defineProperty(ServerResponse.prototype, 'send', {
@@ -12,7 +12,7 @@ export const extendResponse = () => {
 		},
 	});
 	Object.defineProperty(ServerResponse.prototype, 'status', {
-		value: function (statusCode): ICustomServerResponse {
+		value: function (statusCode): Response {
 			this.statusCode = statusCode;
 			return this;
 		},

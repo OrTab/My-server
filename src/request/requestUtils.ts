@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { app } from '../setup/app';
 import { MIME_TYPES } from '../setup/constants';
-import { ICustomServerResponse } from '../types/types';
+import { Response } from '../types/types';
 
 export const handleRequest = ({
 	requestRoutesKeywords,
@@ -49,7 +49,7 @@ export const serveStaticFiles = ({
 	filePath,
 	contentType,
 }: {
-	res: ICustomServerResponse;
+	res: Response;
 	filePath: string;
 	contentType: keyof typeof MIME_TYPES;
 }) => {

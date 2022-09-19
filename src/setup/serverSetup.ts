@@ -10,15 +10,12 @@ import {
 	serveStaticFiles,
 	checkIfFileExist,
 } from '../request/requestUtils';
-import { ICustomIncomingMessage, ICustomServerResponse } from '../types/types';
+import { Request, Response } from '../types/types';
 
 extendRequest();
 extendResponse();
 
-const requestHandler = (
-	req: ICustomIncomingMessage,
-	res: ICustomServerResponse
-) => {
+const requestHandler = (req: Request, res: Response) => {
 	if (req.headers.origin) {
 		if (app.authorizedOrigins.includes(req.headers.origin)) {
 			res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
