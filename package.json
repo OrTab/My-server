@@ -1,13 +1,13 @@
 {
   "name": "@or-tab/my-server",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "types": "./lib/main.d.ts",
   "description": "node.js framework with no dependencies",
   "main": "./setup/serverSetup.ts",
   "keywords": ["Node framework","No dependencies","REST api"],
   "scripts": {
     "test": "exit 0",
-    "start": "",
+    "start": "nodemon server.ts",
     "build": "tsc --build && node postBuild.js"
   },
   "repository": {

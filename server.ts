@@ -1,6 +1,6 @@
 const hostname = '127.0.0.1';
 const port = 5000;
-import { noDep } from './setup/serverSetup';
+import { noDep } from './src/setup/serverSetup';
 const { app, server } = noDep();
 app.setStaticFolder('static');
 

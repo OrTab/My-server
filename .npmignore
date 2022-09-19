@@ -9,3 +9,4 @@ tsconfig.json
 lib/types
 types/types.d.ts
 postBuild.js
+src
