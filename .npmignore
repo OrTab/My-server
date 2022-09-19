@@ -6,3 +6,6 @@ prettier.config.js
 node_modules
 nodemon.json
 tsconfig.json    
+lib/types
+types/types.d.ts
+postBuild.js

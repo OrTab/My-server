@@ -1,4 +1,4 @@
-import { ServerResponse, IncomingMessage, RequestListener } from 'http';
+import http, { ServerResponse, IncomingMessage, RequestListener } from 'http';
 
 interface ICustomServerResponse extends ServerResponse {
 	send: (data: {}) => void;

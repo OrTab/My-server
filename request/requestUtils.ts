@@ -2,14 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { app } from '../setup/app';
 import { MIME_TYPES } from '../setup/constants';
-import { ICustomServerResponse, TRouteHandler } from '../types/types';
+import { ICustomServerResponse } from '../types/types';
 
 export const handleRequest = ({
 	requestRoutesKeywords,
 	currentMethodHandlers,
-}: {
-	requestRoutesKeywords: string[];
-	currentMethodHandlers: TRouteHandler;
 }) => {
 	for (let route in currentMethodHandlers) {
 		const currHandler = currentMethodHandlers[route];

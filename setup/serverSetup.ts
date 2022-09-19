@@ -73,6 +73,6 @@ const requestHandler = (
 
 const server = http.createServer(requestHandler as RequestListener);
 
-export const noDep = () => {
-	return { app, server };
+export const noDep = (): { app: typeof app; server: http.Server } => {
+	return { app: app, server };
 };
