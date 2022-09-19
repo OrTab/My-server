@@ -1,9 +1,9 @@
 {
   "name": "@or-tab/my-server",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "types": "./lib/main.d.ts",
+  "main": "./lib/serverSetup.js",
   "description": "node.js framework with no dependencies",
-  "main": "./setup/serverSetup.ts",
   "keywords": ["Node framework","No dependencies","REST api"],
   "scripts": {
     "test": "exit 0",
