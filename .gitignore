@@ -12,6 +12,7 @@ dist
 lib
 dist-ssr
 *.local
+x.js
 
 # Editor directories and files
 .vscode/*

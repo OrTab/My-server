@@ -10,37 +10,62 @@ import {
 	serveStaticFiles,
 	checkIfFileExist,
 } from '../request/requestUtils';
-import { Request, Response } from '../types/types';
+import { Request, Response, TMethodsUppercase } from '../types/types';
 
 extendRequest();
 extendResponse();
 
 const requestHandler = (req: Request, res: Response) => {
 	if (req.headers.origin) {
-		if (app.authorizedOrigins.includes(req.headers.origin)) {
-			res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+		if (
+			(app.authorizedOrigins[req.headers.origin] &&
+				app.authorizedOrigins[req.headers.origin]?.includes(
+					(req.method === 'OPTIONS'
+						? req.headers['access-control-request-method']
+						: req.method) as TMethodsUppercase
+				)) ||
+			app.authorizedOrigins[req.headers.origin]?.includes('*')
+		) {			
+			res.setHeaders([
+				{
+					headerName: 'Access-Control-Allow-Origin',
+					value: req.headers.origin,
+				},
+				{
+					headerName: 'Access-Control-Allow-Methods',
+					value: app.authorizedOrigins[
+						req.headers.origin
+					]?.join() as string,
+				},
+			]);
+			if (req.method === 'OPTIONS') {
+				res.status(200);
+				res.end();
+				return;
+			}
 		} else {
-			return res
-				.status(401)
-				.send(
-					`Access to fetch at ${req.url} from origin ${req.headers.origin} has been blocked by CORS policy: No Access-Control-Allow-Origin header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`
-				);
+			const status = req.method === 'OPTIONS' ? 400 : 403;
+			res.status(status);
+			res.send(
+				`Access to fetch at ${req.url} from origin ${req.headers.origin} has been blocked by CORS policy: No Access-Control-Allow-Origin header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`
+			);
+			return;
 		}
 	}
-	const [requestUrl = '', queryParams = ''] = (req.url as string).split('?');
+
+	const [requestUrl = '', queryParams = ''] = req.url?.split('?') || [];
 	let extension;
 	if (requestUrl === '/') {
 		extension = '.html';
 	} else {
-		extension = path.extname(requestUrl as string);
+		extension = path.extname(requestUrl);
 	}
 	req.queryString = queryParams;
 	if (MIME_TYPES[extension]) {
-		const filePath = (
+		const filePath =
 			extension === '.html' && requestUrl === '/'
 				? 'index.html'
-				: requestUrl
-		) as string;
+				: requestUrl;
 		const isFileExist = checkIfFileExist(filePath);
 		if (isFileExist) {
 			serveStaticFiles({
@@ -56,8 +81,7 @@ const requestHandler = (req: Request, res: Response) => {
 		getRouteDetails(requestUrl);
 	const { callback, params = {} } =
 		handleRequest({
-			currentMethodHandlers:
-				app.handlers[(req.method as string).toLowerCase()],
+			currentMethodHandlers: app.handlers[req.method || ''.toLowerCase()],
 			requestRoutesKeywords,
 		}) || {};
 	if (callback) {

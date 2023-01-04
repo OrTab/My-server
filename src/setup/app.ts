@@ -1,10 +1,15 @@
 import { getRouteDetails } from '../routing/routeUtils';
-import { THandlers, TMethods, TRequestHandler } from '../types/types';
+import {
+	TAllowedOriginsAndMethods,
+	THandlers,
+	TMethods,
+	TRequestHandler,
+} from '../types/types';
 
 class App {
 	private _handlers: Partial<THandlers> = {};
 	staticFolder: string = 'public';
-	authorizedOrigins: string[] = [];
+	authorizedOrigins: TAllowedOriginsAndMethods = {};
 	get = this.getInitializeRequestMethod('get');
 	post = this.getInitializeRequestMethod('post');
 	put = this.getInitializeRequestMethod('put');
@@ -33,7 +38,7 @@ class App {
 		this.staticFolder = folderName;
 	}
 
-	enableCorsForOrigins(origins: string[]) {
+	enableCorsForOrigins(origins: TAllowedOriginsAndMethods) {
 		this.authorizedOrigins = origins;
 	}
 }

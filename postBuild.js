@@ -22,6 +22,7 @@ const filterFileContent = (fileContent, target) => {
     return fileContent
 }
 
+
 const handleFile = (path) => {
     let fileContent = fs.readFileSync(path, 'utf-8')
     let importIdx = fileContent.indexOf(IMPORT)
@@ -50,7 +51,7 @@ const handleFolder = (path) => {
 }
 
 const init = async () => {
-    finalContentFile = fs.readFileSync(`${__dirname}/types/types.d.ts`)
+    finalContentFile = fs.readFileSync(`${__dirname}/src/types/types.d.ts`)
     const typesFolder = await fsPromise.readdir(typesFolderPath, 'utf-8')
     typesFolder.forEach((name) => {
         const basePath = `${typesFolderPath}/${name}`
@@ -61,6 +62,7 @@ const init = async () => {
         }
     })
     fs.unlinkSync(`${__dirname}/lib/server.js`)
+    fs.unlinkSync(`${__dirname}/lib/types/server.d.ts`)
     fs.writeFileSync(__dirname + '/lib/main.d.ts', finalContentFile)
 }
 

@@ -1,5 +1,5 @@
 import { ServerResponse } from 'http';
-import { Response } from '../types/types';
+import { IAdditionalResponseHeaders, Response } from '../types/types';
 
 export const extendResponse = () => {
 	Object.defineProperty(ServerResponse.prototype, 'send', {
@@ -12,8 +12,16 @@ export const extendResponse = () => {
 		},
 	});
 	Object.defineProperty(ServerResponse.prototype, 'status', {
-		value: function (statusCode): Response {
+		value: function (statusCode: number | string): Response {
 			this.statusCode = statusCode;
+			return this;
+		},
+	});
+	Object.defineProperty(ServerResponse.prototype, 'setHeaders', {
+		value: function (headers: IAdditionalResponseHeaders): Response {			
+			headers.forEach((header) => {
+				this.setHeader(header.headerName, header.value);
+			});
 			return this;
 		},
 	});

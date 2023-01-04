@@ -3,6 +3,10 @@ const port = 5000;
 import { noDep } from './src/setup/serverSetup';
 const { app, server } = noDep();
 app.setStaticFolder('static');
+app.enableCorsForOrigins({
+	'http://127.0.0.1:5000': ['*'],
+	'https://nodejs.org': ['GET'],
+});
 
 app.get('/api/v2/:id', (req, res) => {
 	res.send({
