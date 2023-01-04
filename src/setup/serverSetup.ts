@@ -79,12 +79,14 @@ const requestHandler = (req: Request, res: Response) => {
 
 	const { routesKeywords: requestRoutesKeywords } =
 		getRouteDetails(requestUrl);
+		
 	const { callback, params = {} } =
 		handleRequest({
-			currentMethodHandlers: app.handlers[req.method || ''.toLowerCase()],
+			currentMethodHandlers: app.handlers[(req.method || '').toLowerCase()],
 			requestRoutesKeywords,
 		}) || {};
-	if (callback) {
+		
+	if (!!callback) {
 		req.params = params;
 		callback(req, res);
 		return;
