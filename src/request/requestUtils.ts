@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { app } from '../setup/app';
 import { MIME_TYPES } from '../setup/constants';
-import { Response, TRouteHandler } from '../types/types';
+import { Response, TRequestHandler, TRouteHandler } from '../types/types';
 
 export const handleRequest = ({
 	requestRoutesKeywords,
@@ -10,7 +10,10 @@ export const handleRequest = ({
 }: {
 	requestRoutesKeywords: string[];
 	currentMethodHandlers: TRouteHandler;
-}) => {
+}): {
+	callback: TRequestHandler;
+	params: {};
+} | null => {
 	for (let route in currentMethodHandlers) {
 		const currHandler = currentMethodHandlers[route];
 		if (!currHandler) continue;
