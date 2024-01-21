@@ -1,27 +1,35 @@
 {
-  "name": "@or-tab/my-server",
-  "version": "1.1.1",
-  "types": "./lib/main.d.ts",
-  "main": "./lib//setup/serverSetup.js",
-  "description": "node.js framework with no dependencies",
-  "keywords": ["Node framework","No dependencies","REST api"],
-  "scripts": {
-    "test": "exit 0",
-    "start": "nodemon server.ts",
-    "build": "tsc --build && node postBuild.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OrTab/my-server.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/OrTab/my-server/issues"
-  },
-  "homepage": "https://github.com/OrTab/my-server#readme",
-  "devDependencies": {
-    "@types/node": "^18.7.6",
-    "ts-node": "^10.9.1"
-  }
+	"name": "@or-tab/my-server",
+	"version": "0.0.3",
+	"types": "./lib/main.d.ts",
+	"main": "./lib/src/setup/serverSetup.js",
+	"description": "node.js framework with no dependencies",
+	"keywords": [
+		"Node framework",
+		"No dependencies",
+		"REST api"
+	],
+	"files": [
+		"lib/src",
+		"lib/main.d.ts"
+	],
+	"scripts": {
+		"test": "exit 0",
+		"start": "nodemon server.ts",
+		"build": "tsc --build && node postBuild.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/OrTab/my-server.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/OrTab/my-server/issues"
+	},
+	"homepage": "https://github.com/OrTab/my-server#readme",
+	"devDependencies": {
+		"@types/node": "^18.7.6",
+		"ts-node": "^10.9.1"
+	}
 }
