@@ -7,7 +7,7 @@ import {
 } from '../types/types';
 
 class App {
-	private _handlers: Partial<THandlers> = {};
+	handlers: Partial<THandlers> = {};
 	staticFolder: string = 'public';
 	pageNotFoundFileName = '404.html';
 	authorizedOrigins: TAllowedOriginsAndMethods = {};
@@ -15,16 +15,13 @@ class App {
 	post = this.getInitializeRequestMethod('post');
 	put = this.getInitializeRequestMethod('put');
 	delete = this.getInitializeRequestMethod('post');
-
-	get handlers() {
-		return this._handlers;
-	}
+	options = this.getInitializeRequestMethod('options');
 
 	private getInitializeRequestMethod(method: TMethods) {
 		return (route: string, callback: TRequestHandler) => {
 			const { params, routesKeywords } = getRouteDetails(route);
-			this._handlers[method] = this._handlers[method] ?? {};
-			const currentMethodHandler = this._handlers[method];
+			this.handlers[method] = this.handlers[method] ?? {};
+			const currentMethodHandler = this.handlers[method];
 			if (currentMethodHandler) {
 				currentMethodHandler[route] = {
 					params,

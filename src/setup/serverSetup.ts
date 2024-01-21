@@ -36,7 +36,7 @@ const requestHandler = (req: Request, res: Response) => {
 					]?.join() as string,
 				},
 			]);
-			if (req.method === 'OPTIONS') {
+			if (req.method === 'OPTIONS' && !app.handlers.options) {
 				res.status(200);
 				res.end();
 				return;
@@ -93,9 +93,12 @@ const requestHandler = (req: Request, res: Response) => {
 	return serve404(res);
 };
 
-export const noDep = (): { app: typeof app; server: http.Server } => {
+export const noDep = (): {
+	app: typeof app;
+	server: http.Server;
+} => {
 	extendRequest();
 	extendResponse();
-	const server = http.createServer(requestHandler as RequestListener);
-	return { app: app, server };
+	const server = http.createServer(<RequestListener>requestHandler);
+	return { app, server };
 };
