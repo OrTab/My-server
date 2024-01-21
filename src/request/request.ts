@@ -3,7 +3,7 @@ import { IncomingMessage } from 'http';
 export const extendRequest = () => {
 	Object.defineProperty(IncomingMessage.prototype, 'query', {
 		get: function () {
-			const query = {};
+			const query: Record<string, unknown> = {};
 			if (!!this.queryString) {
 				const formattedUrl = new URLSearchParams(this.queryString);
 				for (const [key, value] of formattedUrl.entries()) {
@@ -38,7 +38,7 @@ export const extendRequest = () => {
 			return new Promise((resolve, reject) => {
 				try {
 					let body = '';
-					this.on('data', (chunk) => {
+					this.on('data', (chunk: Buffer) => {
 						body += chunk.toString();
 					});
 					this.on('end', () => {

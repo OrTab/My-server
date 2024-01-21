@@ -39,12 +39,8 @@ type TAllowedOriginsAndMethods = {
 	[origin: string]: TMethodsUppercase[];
 };
 
-type THandlers = {
-	get: TRouteHandler;
-	post: TRouteHandler;
-	put: TRouteHandler;
-	delete: TRouteHandler;
-};
+type THandlers = Record<TMethods, TRouteHandler>;
+
 type TResponseHeadersNames =
 	| 'Accept-Patch'
 	| 'Accept-Ranges'

@@ -31,10 +31,13 @@ export const handleRequest = ({
 			filteredRouteKeywords.length === currHandler.routesKeywords.length
 		) {
 			const { params: routeParams, callback } = currHandler;
-			const params = routeParams.reduce((params, param, idx) => {
-				params[param] = filteredRouteParams[idx];
-				return params;
-			}, {});
+			const params = routeParams.reduce(
+				(params: Record<string, unknown>, param, idx) => {
+					params[param] = filteredRouteParams[idx];
+					return params;
+				},
+				{}
+			);
 
 			return { callback, params };
 		}
@@ -73,7 +76,7 @@ export const serveStaticFiles = ({
 }: {
 	res: Response;
 	filePath: string;
-	contentType: keyof typeof MIME_TYPES;
+	contentType: (typeof MIME_TYPES)[keyof typeof MIME_TYPES];
 }) => {
 	res.setHeader('Content-Type', contentType);
 	const stream = fs.createReadStream(getStaticFilePath(filePath));

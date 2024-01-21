@@ -14,7 +14,8 @@ export const MIME_TYPES = {
 	'.eot': 'application/vnd.ms-fontobject',
 	'.otf': 'application/font-otf',
 	'.wasm': 'application/wasm',
-};
+} as const;
+
 export const METHODS: ['get', 'post', 'put', 'delete'] = [
 	'get',
 	'post',

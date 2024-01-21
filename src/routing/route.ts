@@ -2,5 +2,5 @@ export class Route {
 	handlers = {};
 	constructor() {}
 
-	nestedFor(route) {}
+	nestedFor(route: string) {}
 }

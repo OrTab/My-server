@@ -11,7 +11,7 @@ import {
 	checkIfFileExist,
 	serve404,
 } from '../request/requestUtils';
-import { Request, Response, TMethodsUppercase } from '../types/types';
+import { Request, Response, TMethods, TMethodsUppercase } from '../types/types';
 
 extendRequest();
 extendResponse();
@@ -57,9 +57,9 @@ const requestHandler = (req: Request, res: Response) => {
 	const [requestUrl = '', queryParams = ''] = req.url?.split('?') || [];
 	let extension;
 	if (requestUrl === '/') {
-		extension = '.html';
+		extension = '.html' as keyof typeof MIME_TYPES;
 	} else {
-		extension = path.extname(requestUrl);
+		extension = path.extname(requestUrl) as keyof typeof MIME_TYPES;
 	}
 	req.queryString = queryParams;
 	if (MIME_TYPES[extension]) {
@@ -84,7 +84,7 @@ const requestHandler = (req: Request, res: Response) => {
 	const { callback, params = {} } =
 		handleRequest({
 			currentMethodHandlers:
-				app.handlers[(req.method || '').toLowerCase()],
+				app.handlers[req.method!.toLowerCase() as TMethods]!,
 			requestRoutesKeywords,
 		}) || {};
 

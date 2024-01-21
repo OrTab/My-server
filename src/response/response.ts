@@ -3,7 +3,7 @@ import { IAdditionalResponseHeaders, Response } from '../types/types';
 
 export const extendResponse = () => {
 	Object.defineProperty(ServerResponse.prototype, 'send', {
-		value: function (value): void {
+		value: function (value: unknown): void {
 			this.setHeader('Content-Type', 'application/json');
 			this.write(
 				typeof value !== 'string' ? JSON.stringify(value) : value
@@ -18,7 +18,7 @@ export const extendResponse = () => {
 		},
 	});
 	Object.defineProperty(ServerResponse.prototype, 'setHeaders', {
-		value: function (headers: IAdditionalResponseHeaders): Response {			
+		value: function (headers: IAdditionalResponseHeaders): Response {
 			headers.forEach((header) => {
 				this.setHeader(header.headerName, header.value);
 			});
