@@ -1,8 +1,7 @@
 {
 	"name": "@or-tab/my-server",
-	"version": "0.0.3",
-	"types": "./lib/main.d.ts",
-	"main": "./lib/src/setup/serverSetup.js",
+	"version": "0.0.5",
+	"main": "./lib/dist/setup/serverSetup.js",
 	"description": "node.js framework with no dependencies",
 	"keywords": [
 		"Node framework",
@@ -10,13 +9,14 @@
 		"REST api"
 	],
 	"files": [
-		"lib/src",
-		"lib/main.d.ts"
+		"lib",
+		"src/types/*.*"
 	],
 	"scripts": {
 		"test": "exit 0",
 		"start": "nodemon server.ts",
-		"build": "tsc --build && node postBuild.js"
+		"build": "tsc --build && npm run copy-types",
+		"copy-types": "cp -R src/types lib/dist"
 	},
 	"repository": {
 		"type": "git",
