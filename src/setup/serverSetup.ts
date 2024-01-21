@@ -13,9 +13,6 @@ import {
 } from '../request/requestUtils';
 import { Request, Response, TMethods, TMethodsUppercase } from '../types/types';
 
-extendRequest();
-extendResponse();
-
 const requestHandler = (req: Request, res: Response) => {
 	if (req.headers.origin) {
 		if (
@@ -96,8 +93,9 @@ const requestHandler = (req: Request, res: Response) => {
 	return serve404(res);
 };
 
-const server = http.createServer(requestHandler as RequestListener);
-
 export const noDep = (): { app: typeof app; server: http.Server } => {
+	extendRequest();
+	extendResponse();
+	const server = http.createServer(requestHandler as RequestListener);
 	return { app: app, server };
 };
