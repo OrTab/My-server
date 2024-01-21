@@ -47,6 +47,21 @@ export const checkIfFileExist = (filePath: string) => {
 	return fs.existsSync(path);
 };
 
+export const serve404 = (res: Response) => {
+	res.status(404);
+	const pageNotFoundPath = getStaticFilePath('404.html');
+	try {
+		if (checkIfFileExist('404.html')) {
+			const stream = fs.createReadStream(pageNotFoundPath);
+			stream.pipe(res);
+		} else {
+			res.send({ error: "Couldn't find path" });
+		}
+	} catch (err) {
+		console.error(err);
+	}
+};
+
 export const serveStaticFiles = ({
 	res,
 	filePath,
@@ -59,18 +74,7 @@ export const serveStaticFiles = ({
 	res.setHeader('Content-Type', contentType);
 	const stream = fs.createReadStream(getStaticFilePath(filePath));
 	stream.on('error', () => {
-		res.status(404);
-		const pageNotFoundPath = getStaticFilePath('404.html');
-		try {
-			if (checkIfFileExist('404.html')) {
-				const stream = fs.createReadStream(pageNotFoundPath);
-				stream.pipe(res);
-			} else {
-				res.send({ error: "Couldn't find path" });
-			}
-		} catch (err) {
-			console.error(err);
-		}
+		serve404(res);
 	});
 	stream.pipe(res);
 };

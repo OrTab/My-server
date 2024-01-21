@@ -9,6 +9,7 @@ import {
 	handleRequest,
 	serveStaticFiles,
 	checkIfFileExist,
+	serve404,
 } from '../request/requestUtils';
 import { Request, Response, TMethodsUppercase } from '../types/types';
 
@@ -25,7 +26,7 @@ const requestHandler = (req: Request, res: Response) => {
 						: req.method) as TMethodsUppercase
 				)) ||
 			app.authorizedOrigins[req.headers.origin]?.includes('*')
-		) {			
+		) {
 			res.setHeaders([
 				{
 					headerName: 'Access-Control-Allow-Origin',
@@ -79,19 +80,20 @@ const requestHandler = (req: Request, res: Response) => {
 
 	const { routesKeywords: requestRoutesKeywords } =
 		getRouteDetails(requestUrl);
-		
+
 	const { callback, params = {} } =
 		handleRequest({
-			currentMethodHandlers: app.handlers[(req.method || '').toLowerCase()],
+			currentMethodHandlers:
+				app.handlers[(req.method || '').toLowerCase()],
 			requestRoutesKeywords,
 		}) || {};
-		
+
 	if (!!callback) {
 		req.params = params;
 		callback(req, res);
 		return;
 	}
-	return res.send({ msg: 'no api route match' });
+	return serve404(res);
 };
 
 const server = http.createServer(requestHandler as RequestListener);
