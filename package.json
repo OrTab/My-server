@@ -9,8 +9,7 @@
 		"REST api"
 	],
 	"files": [
-		"lib",
-		"src/types/*.*"
+		"lib"
 	],
 	"scripts": {
 		"test": "exit 0",
