@@ -9,6 +9,7 @@ import {
 class App {
 	private _handlers: Partial<THandlers> = {};
 	staticFolder: string = 'public';
+	pageNotFoundFileName = '404.html';
 	authorizedOrigins: TAllowedOriginsAndMethods = {};
 	get = this.getInitializeRequestMethod('get');
 	post = this.getInitializeRequestMethod('post');
@@ -36,6 +37,10 @@ class App {
 
 	setStaticFolder(folderName: string) {
 		this.staticFolder = folderName;
+	}
+
+	setPageNotFoundFileName(fileName: string) {
+		this.pageNotFoundFileName = fileName;
 	}
 
 	enableCorsForOrigins(origins: TAllowedOriginsAndMethods) {

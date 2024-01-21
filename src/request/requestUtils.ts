@@ -49,9 +49,10 @@ export const checkIfFileExist = (filePath: string) => {
 
 export const serve404 = (res: Response) => {
 	res.status(404);
-	const pageNotFoundPath = getStaticFilePath('404.html');
+	const pageNotFoundFileName = app.pageNotFoundFileName;
+	const pageNotFoundPath = getStaticFilePath(pageNotFoundFileName);
 	try {
-		if (checkIfFileExist('404.html')) {
+		if (checkIfFileExist(pageNotFoundFileName)) {
 			const stream = fs.createReadStream(pageNotFoundPath);
 			stream.pipe(res);
 		} else {
