@@ -34,7 +34,7 @@ export const extendRequest = () => {
 	});
 
 	Object.defineProperty(IncomingMessage.prototype, 'body', {
-		get: function () {
+		value: function () {
 			return new Promise((resolve, reject) => {
 				try {
 					let body = '';
