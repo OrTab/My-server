@@ -5,7 +5,7 @@ import http, {
 } from 'http';
 
 interface Response extends ServerResponse {
-	send: (data: {}) => void;
+	send: (data: unknown) => void;
 	status: (status: number) => Response;
 	setHeaders: (headers: IAdditionalResponseHeaders) => Response;
 }
@@ -17,7 +17,7 @@ interface Request extends IncomingMessage {
 	query: { [key: string]: string };
 	userAgent: string;
 	send: (data: any) => void;
-	body: Promise<unknown>;
+	body: () => Promise<unknown>;
 }
 
 type TRequestHandler = (request: Request, response: Response) => void;
