@@ -17,12 +17,12 @@ const requestHandler = (req: Request, res: Response) => {
 	if (req.headers.origin) {
 		if (
 			(app.authorizedOrigins[req.headers.origin] &&
-				app.authorizedOrigins[req.headers.origin]?.includes(
+				app.authorizedOrigins[req.headers.origin].includes(
 					(req.method === 'OPTIONS'
 						? req.headers['access-control-request-method']
 						: req.method) as TMethodsUppercase
 				)) ||
-			app.authorizedOrigins[req.headers.origin]?.includes('*')
+			app.authorizedOrigins[req.headers.origin].includes('*')
 		) {
 			res.setHeaders([
 				{
@@ -31,9 +31,7 @@ const requestHandler = (req: Request, res: Response) => {
 				},
 				{
 					headerName: 'Access-Control-Allow-Methods',
-					value: app.authorizedOrigins[
-						req.headers.origin
-					]?.join() as string,
+					value: app.authorizedOrigins[req.headers.origin].join(),
 				},
 			]);
 			if (req.method === 'OPTIONS' && !app.handlers.options) {
@@ -51,7 +49,7 @@ const requestHandler = (req: Request, res: Response) => {
 		}
 	}
 
-	const [requestUrl = '', queryParams = ''] = req.url?.split('?') || [];
+	const [requestUrl = '', queryParams = ''] = req.url!.split('?') || [];
 	let extension;
 	if (requestUrl === '/') {
 		extension = '.html' as keyof typeof MIME_TYPES;
