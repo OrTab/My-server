@@ -86,7 +86,7 @@ export const setCorsHeaders = (res: Response, origin: string) => {
 			value: origin,
 		},
 		{
-			headerName: CORS_HEADERS.ALLOW_ORIGIN,
+			headerName: CORS_HEADERS.ALLOW_METHODS,
 			value: app.authorizedOrigins[origin].join(),
 		},
 	]);
