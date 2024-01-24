@@ -10,49 +10,30 @@ import {
 	serveStaticFiles,
 	checkIfFileExist,
 	serve404,
+	setCorsHeaders,
+	handleBadCorsRequest,
+	isValidCorsRequest,
 } from '../request/requestUtils';
 import { Request, Response, TMethods, TMethodsUppercase } from '../types/types';
 
 const requestHandler = (req: Request, res: Response) => {
-	if (req.headers.origin) {
-		if (
-			(app.authorizedOrigins[req.headers.origin] &&
-				app.authorizedOrigins[req.headers.origin].includes(
-					(req.method === 'OPTIONS'
-						? req.headers['access-control-request-method']
-						: req.method) as TMethodsUppercase
-				)) ||
-			app.authorizedOrigins[req.headers.origin].includes('*')
-		) {
-			res.setHeaders([
-				{
-					headerName: 'Access-Control-Allow-Origin',
-					value: req.headers.origin,
-				},
-				{
-					headerName: 'Access-Control-Allow-Methods',
-					value: app.authorizedOrigins[req.headers.origin].join(),
-				},
-			]);
-			if (req.method === 'OPTIONS' && !app.handlers.options) {
-				res.status(200);
+	const { url, method, headers } = req;
+	const { origin } = headers;
+	if (origin) {
+		if (isValidCorsRequest(req)) {
+			setCorsHeaders(res, origin);
+			if (method === 'OPTIONS' && !app.handlers.options) {
+				res.status(HTTP_STATUS_CODES.OK);
 				res.end();
 				return;
 			}
 		} else {
-			const status =
-				req.method === 'OPTIONS'
-					? HTTP_STATUS_CODES.BAD_REQUEST
-					: HTTP_STATUS_CODES.FORBIDDEN;
-			res.status(status);
-			res.send(
-				`Access to fetch at ${req.url} from origin ${req.headers.origin} has been blocked by CORS policy: No Access-Control-Allow-Origin header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`
-			);
+			handleBadCorsRequest(res, <TMethodsUppercase>method);
 			return;
 		}
 	}
 
-	const [requestUrl = '', queryParams = ''] = req.url!.split('?') || [];
+	const [requestUrl = '', queryParams = ''] = url!.split('?') || [];
 	let extension;
 	if (requestUrl === '/') {
 		extension = '.html' as keyof typeof MIME_TYPES;
@@ -82,7 +63,7 @@ const requestHandler = (req: Request, res: Response) => {
 	const { callback, params = {} } =
 		handleRequest({
 			currentMethodHandlers:
-				app.handlers[req.method!.toLowerCase() as TMethods]!,
+				app.handlers[method!.toLowerCase() as TMethods]!,
 			requestRoutesKeywords,
 		}) || {};
 

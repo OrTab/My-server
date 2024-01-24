@@ -1,8 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 import { app } from '../setup/app';
-import { HTTP_STATUS_CODES, MIME_TYPES } from '../setup/constants';
-import { Response, TRequestHandler, TRouteHandler } from '../types/types';
+import {
+	CORS_HEADERS,
+	HTTP_STATUS_CODES,
+	MIME_TYPES,
+} from '../setup/constants';
+import {
+	Response,
+	Request,
+	TMethodsUppercase,
+	TRequestHandler,
+	TRouteHandler,
+} from '../types/types';
 
 export const handleRequest = ({
 	requestRoutesKeywords,
@@ -67,6 +77,46 @@ export const serve404 = (res: Response) => {
 	} catch (err) {
 		console.error(err);
 	}
+};
+
+export const setCorsHeaders = (res: Response, origin: string) => {
+	res.setHeaders([
+		{
+			headerName: CORS_HEADERS.ALLOW_ORIGIN,
+			value: origin,
+		},
+		{
+			headerName: CORS_HEADERS.ALLOW_ORIGIN,
+			value: app.authorizedOrigins[origin].join(),
+		},
+	]);
+};
+
+export const handleBadCorsRequest = (
+	res: Response,
+	method: TMethodsUppercase
+) => {
+	const status =
+		method === 'OPTIONS'
+			? HTTP_STATUS_CODES.BAD_REQUEST
+			: HTTP_STATUS_CODES.FORBIDDEN;
+	res.status(status);
+	res.send(
+		`CORS policy violation: Request from origin ${origin} is not allowed.`
+	);
+};
+
+export const isValidCorsRequest = (req: Request) => {
+	const { method, headers } = req;
+	const { origin } = headers;
+	const accessControlMethod = headers['access-control-request-method'];
+	return (
+		app.authorizedOrigins[origin!]?.includes(
+			(method === 'OPTIONS'
+				? accessControlMethod
+				: method) as TMethodsUppercase
+		) || app.authorizedOrigins[origin!].includes('*')
+	);
 };
 
 export const serveStaticFiles = ({

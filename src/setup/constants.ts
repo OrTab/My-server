@@ -80,3 +80,8 @@ export const HTTP_STATUS_CODES = {
 	NOT_EXTENDED: 510,
 	NETWORK_AUTHENTICATION_REQUIRED: 511,
 } as const;
+
+export const CORS_HEADERS = {
+	ALLOW_ORIGIN: 'Access-Control-Allow-Origin',
+	ALLOW_METHODS: 'Access-Control-Allow-Methods',
+} as const;
