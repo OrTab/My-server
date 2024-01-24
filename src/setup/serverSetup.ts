@@ -22,6 +22,8 @@ const requestHandler = (req: Request, res: Response) => {
 	if (origin) {
 		if (isValidCorsRequest(req)) {
 			setCorsHeaders(res, origin);
+			// If the request method is OPTIONS and it has passed CORS validation,
+			// we can respond with a status OK (200) only if there are no OPTIONS handlers configured.
 			if (method === 'OPTIONS' && !app.handlers.options) {
 				res.status(HTTP_STATUS_CODES.OK);
 				res.end();
