@@ -13,8 +13,8 @@ interface Response extends ServerResponse {
 interface Request extends IncomingMessage {
 	isMobile: boolean;
 	queryString: string;
-	params: Record<string, any>;
-	query: Record<string, any>;
+	params: Record<string, string>;
+	query: Record<string, string>;
 	userAgent: string;
 	send: (data: any) => void;
 	body: <T = any>() => Promise<T>;
