@@ -1,10 +1,10 @@
-import http, { RequestListener } from 'http';
+import http, { RequestListener, STATUS_CODES } from 'http';
 import path from 'path';
 import { extendRequest } from '../request/request';
 import { extendResponse } from '../response/response';
 import { getRouteDetails } from '../routing/routeUtils';
 import { app } from './app';
-import { MIME_TYPES } from './constants';
+import { HTTP_STATUS_CODES, MIME_TYPES } from './constants';
 import {
 	handleRequest,
 	serveStaticFiles,
@@ -40,7 +40,10 @@ const requestHandler = (req: Request, res: Response) => {
 				return;
 			}
 		} else {
-			const status = req.method === 'OPTIONS' ? 400 : 403;
+			const status =
+				req.method === 'OPTIONS'
+					? HTTP_STATUS_CODES.BAD_REQUEST
+					: HTTP_STATUS_CODES.FORBIDDEN;
 			res.status(status);
 			res.send(
 				`Access to fetch at ${req.url} from origin ${req.headers.origin} has been blocked by CORS policy: No Access-Control-Allow-Origin header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`

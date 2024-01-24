@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { app } from '../setup/app';
-import { MIME_TYPES } from '../setup/constants';
+import { HTTP_STATUS_CODES, MIME_TYPES } from '../setup/constants';
 import { Response, TRequestHandler, TRouteHandler } from '../types/types';
 
 export const handleRequest = ({
@@ -54,7 +54,7 @@ export const checkIfFileExist = (filePath: string) => {
 };
 
 export const serve404 = (res: Response) => {
-	res.status(404);
+	res.status(HTTP_STATUS_CODES.NOT_FOUND);
 	const pageNotFoundFileName = app.pageNotFoundFileName;
 	const pageNotFoundPath = getStaticFilePath(pageNotFoundFileName);
 	try {

@@ -1,5 +1,6 @@
 const hostname = '127.0.0.1';
 const port = 5000;
+import { HTTP_STATUS_CODES } from './src/setup/constants';
 import { noDep } from './src/setup/serverSetup';
 const { app, server } = noDep();
 app.setStaticFolder('static');
@@ -23,7 +24,7 @@ app.get('/api/v2/profile/:profileId/photos/:photoId', (req, res) => {
 
 app.get('/massage/:id', (req, res) => {
 	const { id } = req.params;
-	res.status(200).send({
+	res.status(HTTP_STATUS_CODES.OK).send({
 		massage: `massage from server with id - ${id}`,
 	});
 });
@@ -48,7 +49,7 @@ app.post('/api/my-post', (req, res) => {
 });
 
 app.post('/api/my-post/:id', async (req, res) => {
-	const body = await req.body;
+	const body = await req.body();
 	res.send({
 		msg: `This is the post with parser body and the id is ${req.params['id']}`,
 		body,
@@ -56,7 +57,7 @@ app.post('/api/my-post/:id', async (req, res) => {
 });
 
 app.put('/api/my-put/:id', async (req, res) => {
-	const body = await req.body;
+	const body = await req.body();
 	res.send({
 		msg: `the put worked and the id is ${req.params['id']}`,
 		body,
