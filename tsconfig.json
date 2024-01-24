@@ -6,7 +6,6 @@
     "baseUrl": "./src",
     "paths": {
       "*": ["*"],
-      "types/*": ["../types/*"]
     },
     "esModuleInterop": true,
     "skipLibCheck": true,
