@@ -92,29 +92,18 @@ export const setCorsHeaders = (res: Response, origin: string) => {
 	]);
 };
 
-export const handleBadCorsRequest = (
-	res: Response,
-	method: TMethodsUppercase
-) => {
-	const status =
-		method === 'OPTIONS'
-			? HTTP_STATUS_CODES.BAD_REQUEST
-			: HTTP_STATUS_CODES.FORBIDDEN;
-	res.status(status);
-	res.send(
-		`CORS policy violation: Request from origin ${origin} is not allowed.`
-	);
+export const handleBadCorsRequest = (res: Response) => {
+	res.status(HTTP_STATUS_CODES.FORBIDDEN).send('Origin not allowed.');
 };
 
 export const isValidCorsRequest = (req: Request) => {
 	const { method, headers } = req;
 	const { origin } = headers;
 	const accessControlMethod = headers['access-control-request-method'];
+	const requestedMethod = accessControlMethod || method;
 	return (
 		app.authorizedOrigins[origin!]?.includes(
-			(method === 'OPTIONS'
-				? accessControlMethod
-				: method) as TMethodsUppercase
+			<TMethodsUppercase>requestedMethod
 		) || app.authorizedOrigins[origin!].includes('*')
 	);
 };

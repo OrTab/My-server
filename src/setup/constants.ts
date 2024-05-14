@@ -16,12 +16,7 @@ export const MIME_TYPES = {
 	'.wasm': 'application/wasm',
 } as const;
 
-export const METHODS: ['get', 'post', 'put', 'delete'] = [
-	'get',
-	'post',
-	'put',
-	'delete',
-];
+export const METHODS = ['get', 'post', 'put', 'delete', 'options'] as const;
 
 export const HTTP_STATUS_CODES = {
 	CONTINUE: 100,
